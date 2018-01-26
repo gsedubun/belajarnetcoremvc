@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -15,12 +16,19 @@ namespace belajarnetcoremvc
         {
             Configuration = configuration;
         }
-
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(opt=> {
+                    opt.LoginPath= new Microsoft.AspNetCore.Http.PathString("/security/login") ;
+                    opt.LogoutPath= new Microsoft.AspNetCore.Http.PathString("/security/signout") ;
+                    opt.ExpireTimeSpan=TimeSpan.FromMinutes(2);
+                    opt.SlidingExpiration=false;
+                    opt.AccessDeniedPath="/Security/denied";
+                });
             services.AddMvc();
         }
 
@@ -35,15 +43,10 @@ namespace belajarnetcoremvc
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-
+            app.UseAuthentication();          
             app.UseStaticFiles();
-
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
+            app.UseMvcWithDefaultRoute();
+         
         }
     }
 }
