@@ -4,9 +4,13 @@
 @using belajarnetcoremvc.Models
 @model LoginViewModel
 <h2>@ViewData["Title"]</h2>
-<p>@ViewData["Message"]</p>
+<p>@ViewData["Message"].<br/>
+   
+</p>
+     @Html.ValidationSummary(true)
 
 <div class="form-group col-xs-12" >
+    
     <form  method="post" class="panel panel-default col-md-5" >
      <div class="panel-body">
         <label>Username</label>
